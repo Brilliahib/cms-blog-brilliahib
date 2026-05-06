@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectNoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +28,18 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/update-account', [AuthController::class, 'updateAccount']);
         Route::put('/change-password', [AuthController::class, 'changePassword']);
         Route::put('/update-profile-picture', [AuthController::class, 'changeProfilePicture']);
+    });
+
+    // Project routes
+    Route::apiResource('projects', ProjectController::class);
+
+    // Project notes routes
+    Route::prefix('projects/{project}')->group(function () {
+        Route::get('notes', [ProjectNoteController::class, 'index']);
+        Route::post('notes', [ProjectNoteController::class, 'store']);
+        Route::get('notes/{note}', [ProjectNoteController::class, 'show']);
+        Route::put('notes/{note}', [ProjectNoteController::class, 'update']);
+        Route::delete('notes/{note}', [ProjectNoteController::class, 'destroy']);
     });
 });
 
