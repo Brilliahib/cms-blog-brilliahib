@@ -11,8 +11,10 @@ class ProjectController extends Controller
     /**
      * 1. Get all projects with pagination
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->query('search');
+
         $projects = Project::select([
             'id',
             'title',
@@ -20,8 +22,12 @@ class ProjectController extends Controller
             'priority',
             'status'
         ])
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', '%' . $search . '%');
+            })
             ->latest()
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return response()->json([
             'meta' => [
